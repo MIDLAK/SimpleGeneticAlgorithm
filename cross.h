@@ -11,5 +11,8 @@ struct childs {
 
 /* одноточечный бинарный кроссинговер */
 struct childs* single_point_cross(struct parents *family, int point);
+/* одноточечный бинарный кроссинговер для множества семей */
+struct childs* all_single_point_cross(struct parents *families, int size,
+        int point_min, int point_max);
 
 #endif /* __CROSS */
