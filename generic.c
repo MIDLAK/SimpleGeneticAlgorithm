@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 /* генерация случайной популяции */
-struct chromosome* random_population(int size)
+struct chromosome* random_population(int size, int xmin, int xmax)
 {
     struct chromosome *population = (struct chromosome*)malloc(
             sizeof(struct chromosome) * size);
@@ -13,7 +13,7 @@ struct chromosome* random_population(int size)
     srand(time(NULL)); 
     for (int i = 0; i < size; i++) {
         population[i].id = i;
-        population[i].x = rand() % 40;
+        population[i].x = rand() % (xmax + 1 - xmin) + xmin;
         population[i].fitness = 0;
     }
 

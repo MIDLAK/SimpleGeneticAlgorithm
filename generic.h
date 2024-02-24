@@ -4,6 +4,6 @@
 #include "chromosome.h"
 
 /* генерация случайной популяции */
-struct chromosome* random_population(int size);
+struct chromosome* random_population(int size, int xmin, int xmax);
 
 #endif

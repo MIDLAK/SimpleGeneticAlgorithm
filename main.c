@@ -6,15 +6,9 @@
 #include "parentselection.h"
 #include "generic.h"
 #include "logger.h"
+#include "fitness.h"
 
 
-/* целевая функция (min: x = 1, locmin: x = 6) */
-int target(int x) 
-{
-    int res = (int) 5 - 24 * x + 17 * pow((double)x, 2.0) - 11.0 / 3 * pow((double)x, 3.0) 
-        + 1.0 / 4 * pow((double)x, 4); 
-    return res;
-}
 
 /* подсчёт пар, образованных с самим собой */
 int parthenogenesis(struct parents *families, int size)
@@ -31,11 +25,19 @@ int parthenogenesis(struct parents *families, int size)
 int main(int argc, char **argv)
 {
 #define POPSIZE 100
-    struct chromosome *population = random_population(POPSIZE); 
+#define XMIN 0
+#define XMAX 7
+    struct chromosome *population = random_population(POPSIZE, XMIN, XMAX); 
+    all_fitness(population, POPSIZE);
     struct parents *families = panmixia(population, POPSIZE);
 
     int selfpar = parthenogenesis(families, POPSIZE);
     logg(NULL, "[debug] партогинез замечен в %d случаях из %d\n", selfpar, POPSIZE); 
+
+    for (int i = 0; i < POPSIZE; i++) {
+        logg(NULL, "[debug] id = %d, x = %d, fitness = %d\n", 
+                population[i].id, population[i].x, population[i].fitness); 
+    }
 
     free(population);
     free(families);
