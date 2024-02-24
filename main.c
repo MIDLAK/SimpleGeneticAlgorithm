@@ -7,8 +7,7 @@
 #include "generic.h"
 #include "logger.h"
 #include "fitness.h"
-
-
+#include "cross.h"
 
 /* подсчёт пар, образованных с самим собой */
 int parthenogenesis(struct parents *families, int size)
@@ -30,14 +29,11 @@ int main(int argc, char **argv)
     struct chromosome *population = random_population(POPSIZE, XMIN, XMAX); 
     all_fitness(population, POPSIZE);
     struct parents *families = panmixia(population, POPSIZE);
+    
+    struct childs *childs = single_point_cross(&families[0], 3);
 
     int selfpar = parthenogenesis(families, POPSIZE);
     logg(NULL, "[debug] партогинез замечен в %d случаях из %d\n", selfpar, POPSIZE); 
-
-    for (int i = 0; i < POPSIZE; i++) {
-        logg(NULL, "[debug] id = %d, x = %d, fitness = %d\n", 
-                population[i].id, population[i].x, population[i].fitness); 
-    }
 
     free(population);
     free(families);
