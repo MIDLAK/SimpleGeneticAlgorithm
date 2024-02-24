@@ -37,17 +37,17 @@ int main(int argc, char **argv)
     struct childs *childs = all_single_point_cross(&families[0], POPSIZE, 1, 3);
 
     /* мутация и вычисление приспособленности */
-#define MAX_MUTATION_BIT 7 
+#define MAX_MUTATION_BIT 10 
+#define MUTATION_PROBABYLITY 0.15 /*TODO: Генерация случайных чисел какая-то странная */
     for (int i = 0; i < POPSIZE; i++) {
-        mutation(childs[i].one, MAX_MUTATION_BIT); 
-        mutation(childs[i].two, MAX_MUTATION_BIT); 
+        mutation(childs[i].one, MAX_MUTATION_BIT, MUTATION_PROBABYLITY); 
+        mutation(childs[i].two, MAX_MUTATION_BIT, MUTATION_PROBABYLITY); 
         fitness(childs[i].one);
         fitness(childs[i].two);
-        /*
+
         logg(NULL, "[debug] ch1 = [x = %d; fit = %d]  ch2 = [x = %d; fit = %d]\n",
                 childs[i].one->x, childs[i].one->fitness, 
                 childs[i].two->x, childs[i].two->fitness); 
-        */
     }
    
 
