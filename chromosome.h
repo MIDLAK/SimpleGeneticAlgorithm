@@ -2,8 +2,9 @@
 #define __CHROMOSOME
 
 struct chromosome {
-    int x1, x2, x3, x4; /* решение */
-    int id;             /* для тестов */
+    int x;      /* решение */
+    int id;      /* для тестов */
+    int fitness; /* приспособленность */
 };
 
 #endif

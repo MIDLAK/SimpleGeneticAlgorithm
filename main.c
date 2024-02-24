@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 #include "chromosome.h"
 #include "parentselection.h"
+#include "generic.h"
 #include "logger.h"
+
 
 /* целевая функция (min: x = 1, locmin: x = 6) */
 int target(int x) 
@@ -13,26 +16,28 @@ int target(int x)
     return res;
 }
 
-int main(int argc, char **argv)
+/* подсчёт пар, образованных с самим собой */
+int parthenogenesis(struct parents *families, int size)
 {
-#define POPSIZE 100
-    struct chromosome *population = (struct chromosome*)malloc(
-            sizeof(struct chromosome) * POPSIZE);
-    for (int i = 0; i < POPSIZE; i++) {
-        population[i].id = i;
-        population[i].x1 = 1;
-        population[i].x2 = 2;
-        population[i].x3 = 3;
-        population[i].x4 = 4;
-    }
-
-    struct parents *families = panmixia(population, POPSIZE);
     int selfpar = 0;
-    for (int i = 0; i < POPSIZE; i++) {
+    for (int i = 0; i < size; i++) {
         if (families[i].one->id == families[i].two->id) 
             selfpar++;
     }
+
+    return selfpar;
+}
+
+int main(int argc, char **argv)
+{
+#define POPSIZE 100
+    struct chromosome *population = random_population(POPSIZE); 
+    struct parents *families = panmixia(population, POPSIZE);
+
+    int selfpar = parthenogenesis(families, POPSIZE);
     logg(NULL, "[debug] партогинез замечен в %d случаях из %d\n", selfpar, POPSIZE); 
 
+    free(population);
+    free(families);
     return 0;
 }
