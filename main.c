@@ -8,6 +8,7 @@
 #include "logger.h"
 #include "fitness.h"
 #include "cross.h"
+#include "mutation.h"
 
 
 /* подсчёт пар, образованных с самим собой */
@@ -33,11 +34,22 @@ int main(int argc, char **argv)
 
     /* отбор родителей и кроссинговер */
     struct parents *families = panmixia(population, POPSIZE);
-    struct childs *childs = all_single_point_cross(&families[0], POPSIZE, 3, 3);
+    struct childs *childs = all_single_point_cross(&families[0], POPSIZE, 1, 3);
+
+    /* мутация и вычисление приспособленности */
+#define MAX_MUTATION_BIT 7 
     for (int i = 0; i < POPSIZE; i++) {
+        mutation(childs[i].one, MAX_MUTATION_BIT); 
+        mutation(childs[i].two, MAX_MUTATION_BIT); 
         fitness(childs[i].one);
         fitness(childs[i].two);
+        /*
+        logg(NULL, "[debug] ch1 = [x = %d; fit = %d]  ch2 = [x = %d; fit = %d]\n",
+                childs[i].one->x, childs[i].one->fitness, 
+                childs[i].two->x, childs[i].two->fitness); 
+        */
     }
+   
 
     int selfpar = parthenogenesis(families, POPSIZE);
     logg(NULL, "[debug] партогинез замечен в %d случаях из %d\n", selfpar, POPSIZE); 
