@@ -9,6 +9,7 @@
 #include "fitness.h"
 #include "cross.h"
 #include "mutation.h"
+#include "newgenselection.h"
 
 
 /* подсчёт пар, образованных с самим собой */
@@ -21,6 +22,24 @@ int parthenogenesis(struct parents *families, int size)
     }
 
     return selfpar;
+}
+
+/* <<распаковка>> структуры childs в структуру chromosome */
+struct chromosome* childs_to_population(struct childs* childs, int size)
+{
+#define CHROMOSOME_IN_ONE_CHILDS 2 /* у каждой пары по два ребёнка */
+    struct chromosome *population = 
+        (struct chromosome*)malloc(sizeof(struct chromosome) * size * CHROMOSOME_IN_ONE_CHILDS);
+
+    int pop_counter = 0;
+    for (int i = 0; i < size; i++) {
+        population[pop_counter] = *childs[i].one;
+        population[pop_counter+1] = *childs[i].two;
+
+        pop_counter += 2;
+    }
+
+    return population;
 }
 
 int main(int argc, char **argv)
@@ -45,10 +64,41 @@ int main(int argc, char **argv)
         fitness(childs[i].one);
         fitness(childs[i].two);
 
+        /*
         logg(NULL, "[debug] ch1 = [x = %d; fit = %d]  ch2 = [x = %d; fit = %d]\n",
                 childs[i].one->x, childs[i].one->fitness, 
                 childs[i].two->x, childs[i].two->fitness); 
+        */
     }
+
+    struct chromosome *childs_population = childs_to_population(childs, POPSIZE);
+
+    /*
+    for (int i = 0; i < POPSIZE * 2; i++) {
+        logg(NULL, "[debug] i = %d, x = %d, f = %d\n", 
+                i, childs_population[i].x, 
+                childs_population[i].fitness); 
+    }
+    */
+
+    struct chromosome *newgen = fmax_selection(population, childs_population, POPSIZE);
+
+    int fmin = 10000000;
+    int imin = 0;
+    for (int i = 0; i < POPSIZE; i++) {
+        if(newgen[i].fitness < fmin) {
+            imin = i;
+            fmin = newgen[i].fitness;
+        }
+
+        logg(NULL, "[debug] i = %d, x = %d, f = %d\n", 
+                i, newgen[i].x, 
+                newgen[i].fitness); 
+    }
+    logg(NULL, "[debug] newpop i = %d, x = %d, f = %d\n", 
+            imin, newgen[imin].x, 
+            newgen[imin].fitness); 
+
    
 
     int selfpar = parthenogenesis(families, POPSIZE);
@@ -57,5 +107,6 @@ int main(int argc, char **argv)
     free(population);
     free(families);
     free(childs);
+    free(childs_population);
     return 0;
 }
