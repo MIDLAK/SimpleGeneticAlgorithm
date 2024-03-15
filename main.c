@@ -44,7 +44,7 @@ struct chromosome* childs_to_population(struct childs* childs, int size)
 
 int main(int argc, char **argv)
 {
-#define POPSIZE 100
+#define POPSIZE 100 
 #define XMIN 0
 #define XMAX 7
     /* новая популяция */
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
     /* мутация и вычисление приспособленности */
 #define MAX_MUTATION_BIT 10 
-#define MUTATION_PROBABYLITY 0.15 /*TODO: Генерация случайных чисел какая-то странная */
+#define MUTATION_PROBABYLITY 0.25 /*TODO: Генерация случайных чисел какая-то странная */
     for (int i = 0; i < POPSIZE; i++) {
         mutation(childs[i].one, MAX_MUTATION_BIT, MUTATION_PROBABYLITY); 
         mutation(childs[i].two, MAX_MUTATION_BIT, MUTATION_PROBABYLITY); 
@@ -71,18 +71,15 @@ int main(int argc, char **argv)
         */
     }
 
+    /* выборка нового поколения */
     struct chromosome *childs_population = childs_to_population(childs, POPSIZE);
-
-    /*
-    for (int i = 0; i < POPSIZE * 2; i++) {
-        logg(NULL, "[debug] i = %d, x = %d, f = %d\n", 
-                i, childs_population[i].x, 
-                childs_population[i].fitness); 
-    }
-    */
-
     struct chromosome *newgen = fmax_selection(population, childs_population, POPSIZE);
 
+
+    int selfpar = parthenogenesis(families, POPSIZE);
+    logg(NULL, "[debug] партогинез замечен в %d случаях из %d\n", selfpar, POPSIZE); 
+
+    /*
     int fmin = 10000000;
     int imin = 0;
     for (int i = 0; i < POPSIZE; i++) {
@@ -90,19 +87,9 @@ int main(int argc, char **argv)
             imin = i;
             fmin = newgen[i].fitness;
         }
-
-        logg(NULL, "[debug] i = %d, x = %d, f = %d\n", 
-                i, newgen[i].x, 
-                newgen[i].fitness); 
     }
-    logg(NULL, "[debug] newpop i = %d, x = %d, f = %d\n", 
-            imin, newgen[imin].x, 
-            newgen[imin].fitness); 
-
-   
-
-    int selfpar = parthenogenesis(families, POPSIZE);
-    logg(NULL, "[debug] партогинез замечен в %d случаях из %d\n", selfpar, POPSIZE); 
+    */
+    logg(NULL, "[debug] решение: f(%d) = %d\n", newgen[0].x, newgen[0].fitness); 
 
     free(population);
     free(families);
